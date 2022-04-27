@@ -12,12 +12,16 @@ const Login = () => {
   const location = useLocation();
 
   let from = location.state?.from?.pathname || "/";
-
+  let errorElement;
   const [signInWithEmailAndPassword, user, loading, error] =
     useSignInWithEmailAndPassword(auth);
 
   if (user) {
     navigate(from, { replace: true });
+  }
+
+  if (error) {
+    errorElement = <p className="text-danger">Error: {error?.message}</p>;
   }
 
   const handleSubmit = (event) => {
@@ -53,13 +57,11 @@ const Login = () => {
             required
           />
         </Form.Group>
-        <Form.Group className="mb-3" controlId="formBasicCheckbox">
-          <Form.Check type="checkbox" label="Check me out" />
-        </Form.Group>
-        <Button variant="primary" type="submit">
-          Submit
+        <Button variant="primary w-50 mx-auto" type="submit">
+          Login
         </Button>
       </Form>
+      {errorElement}
       <p>
         New to Genius car?
         <Link
