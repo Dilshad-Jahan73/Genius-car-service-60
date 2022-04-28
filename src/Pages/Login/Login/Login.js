@@ -4,6 +4,7 @@ import { useSignInWithEmailAndPassword } from "react-firebase-hooks/auth";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import auth from "../../../firebase.init";
 import SocialLogin from "../SocialLogin/SocialLogin";
+import { useSendPasswordResetEmail } from "react-firebase-hooks/auth";
 
 const Login = () => {
   const emailRef = useRef("");
@@ -12,9 +13,11 @@ const Login = () => {
   const location = useLocation();
 
   let from = location.state?.from?.pathname || "/";
+
   let errorElement;
   const [signInWithEmailAndPassword, user, loading, error] =
     useSignInWithEmailAndPassword(auth);
+  const [sendPasswordResetEmail, sending] = useSendPasswordResetEmail(auth);
 
   if (user) {
     navigate(from, { replace: true });
@@ -35,7 +38,11 @@ const Login = () => {
   const navigateRegister = (event) => {
     navigate("/register");
   };
-
+  const resetPassword = async () => {
+    const email = emailRef.current.value;
+    await sendPasswordResetEmail(email);
+    alert("Sent email");
+  };
   return (
     <div className="container w-50 mx-auto">
       <h2 className="text-primary text-center mt-2">Please Login</h2>
@@ -57,7 +64,7 @@ const Login = () => {
             required
           />
         </Form.Group>
-        <Button variant="primary w-50 mx-auto" type="submit">
+        <Button variant="primary w-50 mx-auto d-block mb-2" type="submit">
           Login
         </Button>
       </Form>
@@ -66,10 +73,20 @@ const Login = () => {
         New to Genius car?
         <Link
           to="/register"
-          className="text-danger pe-auto text-decoration-none"
+          className="text-primary pe-auto text-decoration-none"
           onClick={navigateRegister}
         >
           Please register
+        </Link>
+      </p>
+      <p>
+        Forget password?
+        <Link
+          to="/register"
+          className="text-primary pe-auto text-decoration-none"
+          onClick={resetPassword}
+        >
+          Reset password
         </Link>
       </p>
       <SocialLogin></SocialLogin>
