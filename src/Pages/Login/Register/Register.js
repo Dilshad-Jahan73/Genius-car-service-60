@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import "./Register.css";
 import { useCreateUserWithEmailAndPassword } from "react-firebase-hooks/auth";
@@ -6,6 +6,8 @@ import auth from "../../../firebase.init";
 import SocialLogin from "../SocialLogin/SocialLogin";
 
 const Register = () => {
+  const [agree, setAgree] = useState(false);
+
   const [createUserWithEmailAndPassword, user, loading, error] =
     useCreateUserWithEmailAndPassword(auth);
 
@@ -24,8 +26,10 @@ const Register = () => {
     const name = event.target.name.value;
     const email = event.target.email.value;
     const password = event.target.password.value;
-
-    createUserWithEmailAndPassword(email, password);
+    // const agree = event.target.terms.checked;
+    if (agree) {
+      createUserWithEmailAndPassword(email, password);
+    }
   };
 
   return (
@@ -49,9 +53,23 @@ const Register = () => {
           id=""
           required
         />
-        <input type="checkbox" name="terms" id="terms" />
-        <label htmlFor="terms">Accept Genius Car Terms and Conditions</label>
         <input
+          onClick={() => setAgree(!agree)}
+          type="checkbox"
+          name="terms"
+          id="terms"
+        />
+        <label className={`ps-2 ${agree ? "" : "text-danger"}`} htmlFor="terms">
+          Accept Genius Car Terms and Conditions
+        </label>
+        {/* <label
+          className={agree ? "ps-2 text-primary" : "ps- 2 text-danger"}
+          htmlFor="terms"
+        >
+          Accept Genius Car Terms and Conditions
+        </label> */}
+        <input
+          disabled={!agree}
           className="w-50 mx-auto btn btn-primary mt-2"
           type="submit"
           value="Register"
